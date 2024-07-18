@@ -1,6 +1,8 @@
 package shared.object;
 
-public abstract class Customer {
+import java.io.Serializable;
+
+public abstract class Customer implements Serializable {
     private String name;
     private double total;
     public abstract String info();

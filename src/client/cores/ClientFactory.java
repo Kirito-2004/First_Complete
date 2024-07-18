@@ -2,7 +2,6 @@ package client.cores;
 import client.network.*;
 
 public class ClientFactory {
-
     private Client client;
 
     public Client getClient() {

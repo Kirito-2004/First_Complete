@@ -2,11 +2,11 @@ package server.model;
 import server.object.Account;
 import shared.transferObject.LogEntry;
 import shared.transferObject.Request;
+import shared.transferObject.Response;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.*;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -49,15 +49,15 @@ public class AccountManager implements Manager{
         }
     }
 
-    public <T> void saveToFile(T account){
+    public void saveToFile(String strObj){
         try (FileWriter writer = new FileWriter(path, true)) {
-            writer.write(account.toString() + "\n");
+            writer.write(strObj + "\n");
         } catch (IOException e) {
             System.out.println("\u001B[31m" + "<Error writing to file>" + "\u001B[0m");
         }
     }
 
-    public Request createAccount(String data){
+    public Response createAccount(String data){
         String[] messageArr = {
                 "<This phone number is not exist>",
                 "<This phone number is registed>",
@@ -66,26 +66,51 @@ public class AccountManager implements Manager{
 
         String[] dataArr = data.split(",");
         String tel = dataArr[1];
-        Request request = null;
+        Response response = null;
 
         if(!personManger.isExist(tel)){
-            request = new Request("CreateAccount", "\u001B[31m"+messageArr[0]+"\u001B[0m");
+            response = new Response( "\u001B[31m"+messageArr[0]+"\u001B[0m",null);
         }
         else if(hashAcc.get(Integer.parseInt(tel))!=null){
-            request = new Request("CreateAccount", "\u001B[31m"+messageArr[1]+"\u001B[0m");
+            response = new Response( "\u001B[31m"+messageArr[1]+"\u001B[0m",null);
         }
         else{
             try {
                 Account account = Account.fromString(AccountManager.getLastAcc()+","+data);
                 hashAcc.put(account.getTel(), account);
-                saveToFile(account);
-                request = new Request("CreateAccount", "\u001B[32m"+messageArr[2]+"\u001B[0m");
+                saveToFile(account.toString());
+                response = new Response( "\u001B[32m"+messageArr[2]+"\u001B[0m",null);
             }
             catch (IllegalArgumentException e) {
-                request = new Request("CreateAccount", "\u001B[31m"+messageArr[3]+"\u001B[0m");
+                response = new Response( "\u001B[31m"+messageArr[3]+"\u001B[0m",null);
             }
         }
-        return request;
+        return response;
+    }
+
+    public Response login(String data){
+        String[] messageArr = {
+                "<This account is not exist>",
+                "<This account is not correct>",
+                "<Login successfully>",
+                "<Login failed>"};
+
+        String[] dataArr = data.split(",");
+        String tel = dataArr[0];
+        String password = dataArr[1];
+        Response response = null;
+
+        Account account = hashAcc.get(Integer.parseInt(tel));
+        if(account==null){
+            response = new Response( "\u001B[31m"+messageArr[0]+"\u001B[0m",null);
+        }
+        else if(!account.getPassword().equals(password)){
+            response = new Response( "\u001B[31m"+messageArr[1]+"\u001B[0m",null);
+        }
+        else{
+            response = new Response( "\u001B[32m"+messageArr[2]+"\u001B[0m",account.getCustomer());
+        }
+        return response;
     }
 
     public void removeAccount(String username){

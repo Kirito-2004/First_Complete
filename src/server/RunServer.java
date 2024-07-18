@@ -1,5 +1,4 @@
 package server;
-import server.model.AccountManager;
 import server.network.SocketServer;
 
 public class RunServer {

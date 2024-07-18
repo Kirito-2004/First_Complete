@@ -1,8 +1,9 @@
 package server.network;
 
 import server.model.AccountManager;
-import server.object.Account;
+import server.model.ProductManager;
 import shared.transferObject.Request;
+import shared.transferObject.Response;
 
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
@@ -13,13 +14,15 @@ import java.net.Socket;
 public class SocketHandler implements Runnable{
     private Socket socket;
     private AccountManager accountManager;
+    private ProductManager productManager;
 
     private ObjectOutputStream outToClient;
     private ObjectInputStream inFromClient;
 
-    public SocketHandler(Socket socket, AccountManager accountManager){
+    public SocketHandler(Socket socket, AccountManager accountManager, ProductManager productManager){
         this.socket = socket;
         this.accountManager = accountManager;
+        this.productManager = productManager;
         //Send and receive data
         try {
             outToClient = new ObjectOutputStream(socket.getOutputStream());
@@ -37,11 +40,16 @@ public class SocketHandler implements Runnable{
                 accountManager.addListener("NewLogEntry", this::onNewLogEntry);
             }
             else if("CreateAccount".equals(request.getType())) {
-                Request r = accountManager.createAccount(data);
-                outToClient.writeObject(r);
+                Response response = accountManager.createAccount(data);
+                outToClient.writeObject(response);
             }
             else if("Login".equals(request.getType())) {
-
+                Response response = accountManager.login(data);
+                outToClient.writeObject(response);
+            }
+            else if("ListProduct".equals(request.getType())){
+                Response response = new Response("ListProduct", productManager.getHashProd());
+                outToClient.writeObject(response);
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

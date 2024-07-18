@@ -43,9 +43,9 @@ public class PersonManger implements Manager {
         }
     }
 
-    public <T> void saveToFile(T person){
+    public void saveToFile(String strObj){
         try (FileWriter writer = new FileWriter(path, true)) {
-            writer.write(person.toString() + "\n");
+            writer.write(strObj + "\n");
         } catch (IOException e) {
             System.out.println("\u001B[31m" + "<Error writing to file>" + "\u001B[0m");
         }

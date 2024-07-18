@@ -32,8 +32,8 @@ import shared.object.*;
         return tel;
     }
 
-    public String getName() {
-        return customer.getName();
+    public Customer getCustomer() {
+        return customer;
     }
 
     @Override

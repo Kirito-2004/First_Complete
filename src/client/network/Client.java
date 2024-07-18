@@ -1,5 +1,10 @@
 package client.network;
+
+import shared.transferObject.Response;
+
+import java.io.IOException;
+
 public interface Client {
     void startClient();
-    void loadMainMenu();
+    Response request(String type, String arg) throws IOException, ClassNotFoundException;
 }

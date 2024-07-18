@@ -1,17 +1,19 @@
 package server.network;
 import server.model.AccountManager;
-import server.model.PersonManger;
+import server.model.ProductManager;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class SocketServer{
-    AccountManager accountManager;
+    private AccountManager accountManager;
+    private ProductManager productManager;
     public SocketServer(){
-        System.out.println("\u001B[36m"+"#Loading data"+"\u001B[0m");
+        System.out.println("\u001B[36m"+"#Loading database"+"\u001B[0m");
         accountManager = new AccountManager();
         accountManager.loadFromFile();
+        productManager = new ProductManager();
+        productManager.loadFromFile();
     }
     public void startServer(){
         try {
@@ -19,10 +21,10 @@ public class SocketServer{
             System.out.println("\u001B[36m"+"#Server started"+"\u001B[0m");
             while(true) {
                 Socket socket = myServer.accept(); //Accept new connection from client
-                new Thread(new SocketHandler(socket,accountManager)).start(); //Create new thread to handle the connection
+                new Thread(new SocketHandler(socket,accountManager,productManager)).start(); //Create new thread to handle the connection
             } //Auto accept new connection from client
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("\u001B[31m"+"<Cannot start server>"+"\u001B[0m");
         }
     }
 }

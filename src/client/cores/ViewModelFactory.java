@@ -1,17 +1,22 @@
 package client.cores;
-import client.views.*;
-import client.views.menu.MenuView;
 import client.views.menu.MenuViewModel;
+import client.views.register.RegisterViewModel;
 
 public class ViewModelFactory {
-    private final ModelFactory model;
+    private final ModelFactory mf;
     private MenuViewModel menuViewModel;
-    public ViewModelFactory(ModelFactory model) {
-        this.model = model;
+    private RegisterViewModel registerViewModel;
+    public ViewModelFactory(ModelFactory mf) {
+        this.mf = mf;
     }
     public MenuViewModel getMenuViewModel() {
         if (menuViewModel == null)
-            menuViewModel = new MenuViewModel(model.getCustomerManager());
+            menuViewModel = new MenuViewModel(mf.getCustomerManager());
         return menuViewModel;
+    }
+    public RegisterViewModel getRegisterViewModel() {
+        if (registerViewModel == null)
+            registerViewModel = new RegisterViewModel(mf.getCustomerManager());
+        return registerViewModel;
     }
 }

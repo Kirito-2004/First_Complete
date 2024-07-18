@@ -3,5 +3,5 @@ import shared.util.Subject;
 
 public interface Manager extends Subject {
     public void loadFromFile();
-    public <T> void saveToFile(T obj);
+    public void saveToFile(String strObj);
 }

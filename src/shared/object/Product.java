@@ -1,6 +1,8 @@
 package shared.object;
 
-public class Product {
+import java.io.Serializable;
+
+public class Product implements Serializable {
     private int idProd;
     private String name;
     private double price;
